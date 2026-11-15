@@ -1,22 +1,39 @@
-name: build
-on: [push, workflow_dispatch]
+name: UltraBoost MEGA Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - run: unzip -q visualmod.zip
-      - uses: actions/setup-java@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.12
-          build-root-directory: visualmod
-      - run: gradle build
-        working-directory: visualmod
-      - uses: actions/upload-artifact@v4
+          gradle-version: 8.10.2
+
+      - name: Build UltraBoost
+        run: gradle build
+
+      - name: Upload UltraBoost JAR
+        uses: actions/upload-artifact@v4
         with:
-          name: visualmod
-          path: visualmod/build/libs/*.jar
+          name: UltraBoost-MEGA-1.21.4
+          path: build/libs/*.jar
